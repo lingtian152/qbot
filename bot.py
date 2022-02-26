@@ -27,7 +27,7 @@ app = Ariadne(
     broadcast=broadcast,
     connect_info=MiraiSession(
         host="http://localhost:8080",  # 填入 HTTP API 服务运行的地址
-        verify_key="INITKEY3dneRqjR",  # 填入 verifyKey
+        verify_key="INITKEYH6TIQjMz",  # 填入 verifyKey
         account=1330542948,  # 你的机器人的 qq 号
     )
 )
