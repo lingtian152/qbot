@@ -1,7 +1,5 @@
 import asyncio
-from pyexpat.errors import messages
 import re
-from typing import Union
 import aiohttp
 import requests
 
@@ -10,7 +8,7 @@ import requests
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage
 from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Plain
+from graia.ariadne.message.element import Plain, Image
 from graia.ariadne.message.parser.base import MatchContent
 from graia.broadcast.interrupt import InterruptControl
 from graia.ariadne.model import Friend
@@ -53,10 +51,12 @@ async def get_game_data(app: Ariadne, friend: Friend):
             text = response.text
             temp = re.findall(r'\d+', text)
             universes_Id = list(map(int, temp))
-            game_url = f'https://games.roblox.com/v1/games?universeIds={universes_Id[0]}'
+            game__web_api_url = f'https://games.roblox.com/v1/games?universeIds={universes_Id[0]}'
             game_vote_url = f'https://games.roblox.com/v1/games/votes?universeIds={universes_Id[0]}'
+            game_Icon_url = f'https://thumbnails.roblox.com/v1/games/icons?universeIds={universes_Id[0]}&size=256x256&format=Png&isCircular=false'
+            game_place_url = f'https://www.roblox.com/games/{ret_msg}'
             async with aiohttp.ClientSession() as session:
-                async with session.get(game_url) as r:
+                async with session.get(game__web_api_url) as r:
                     if r.status == 200:
                             ret = await r.json()
                             game_name = ret["data"][0]["name"]
@@ -64,12 +64,22 @@ async def get_game_data(app: Ariadne, friend: Friend):
                             game_playing = ret["data"][0]["playing"]
                             game_favorite = ret["data"][0]["favoritedCount"]
                             visits = ret["data"][0]["visits"]
+                            last_time_updated = ret["data"][0]["updated"]
+                            creator_name = ret["data"][0]["creator"]["name"]
                     async with session.get(game_vote_url) as r:
                         if r.status == 200:
                             ret = await r.json()
                             vote_up = ret["data"][0]["upVotes"]
                             vote_down = ret["data"][0]["downVotes"]
+                    async with session.get(game_Icon_url) as r:
+                        if r.status == 200:
+                            ret= await r.json()
+                            game_icon = ret["data"][0]["imageUrl"]
                     await app.sendFriendMessage(friend, MessageChain.create(Plain("正在获取游戏数据...")))
                     await asyncio.sleep(5)
                     await app.sendFriendMessage(friend, 
-                    MessageChain.create(Plain(f'游戏名字: {game_name}\n游戏ID: {game_id}\n游戏在线人数: {game_playing}\n游戏收藏量: {game_favorite}\n浏览量: {visits}\n喜欢人数: {vote_up}\n不喜欢人数: {vote_down}\n总投票人数: {vote_up + vote_down}')))
+                    MessageChain.create(
+                        Plain(f'游戏名字: {game_name}\n游戏ID: {game_id}\n开发者: {creator_name}\n游戏在线人数: {game_playing}\n游戏收藏量: {game_favorite}\n浏览量: {visits}\n最后一次更新时间: {last_time_updated}\n喜欢人数: {vote_up}\n不喜欢人数: {vote_down}\n总投票人数: {vote_up + vote_down}\n游戏链接: {game_place_url}\n游戏封面:'),
+                        Image(url=game_icon)
+                        )
+                    )
