@@ -1,5 +1,5 @@
-import random
 import aiohttp
+
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage
 from graia.ariadne.message.chain import MessageChain
@@ -15,16 +15,16 @@ channel = Channel.current()
 @channel.use(
     ListenerSchema(
         listening_events=[FriendMessage],
-        decorators=[MatchContent("黑丝")],
+        decorators=[MatchContent("白发")],
     )
 )
 
-async def heisi(app: Ariadne, friend: Friend): # lsp专属
-    ero_url = "https://api.lolicon.app/setu/v2?r18=0&tag=黑丝"
+async def white_hair(app: Ariadne, friend: Friend): # lsp专属
+    ero_url = "https://api.lolicon.app/setu/v2?tag=白髮&r18=0"
     async with aiohttp.ClientSession() as session:
         async with session.get(ero_url) as r:
             ret = await r.json()
             pic_url = ret["data"][0]["urls"]["original"]
-        async with session.get(pic_url) as r:
-            pic = await r.read()
-            await app.sendFriendMessage(friend, MessageChain.create(FlashImage(data_bytes=pic)))
+    async with session.get(pic_url) as r:
+        pic = await r.read()
+        await app.sendFriendMessage(friend, MessageChain.create(FlashImage(data_bytes=pic)))
