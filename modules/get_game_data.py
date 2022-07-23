@@ -16,7 +16,7 @@ from graia.saya import Channel, Saya
 from graia.saya.builtins.broadcast import ListenerSchema
 from graia.broadcast.interrupt.waiter import Waiter
 
-
+saya = Saya.current()
 channel = Channel.current()
 inc = InterruptControl(saya.broadcast)  # type: ignore
 
@@ -39,7 +39,6 @@ class SetuTagWaiter(Waiter.create([FriendMessage])):
     )
 )
 async def get_game_data(app: Ariadne, friend: Friend):
-    if friend.id == int(1553396053):
         await app.sendFriendMessage(friend, MessageChain("请在10秒内发送游戏Id"))
         try:
             ret_msg = await inc.wait(SetuTagWaiter(friend), timeout=10)  # 强烈建议设置超时时间否则将可能会永远等待
