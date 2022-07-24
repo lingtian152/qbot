@@ -9,7 +9,6 @@ from graia.ariadne.model import Friend
 from graia.saya import Channel
 from graia.saya.builtins.broadcast import ListenerSchema
 
-from bot import Err
 
 channel = Channel.current()
 
