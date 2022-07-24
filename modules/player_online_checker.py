@@ -53,26 +53,28 @@ def check_game_place(place):
     )
 )
 async def get_game_data(app: Ariadne, friend: Friend):
-        await app.sendFriendMessage(friend, MessageChain("请在10秒内发送用户Id"))
+        await app.send_friend_message(friend, MessageChain("请在10秒内发送用户Id"))
         try:
             ret_msg = await inc.wait(SetuTagWaiter(friend), timeout=10)  # 强烈建议设置超时时间否则将可能会永远等待
         except asyncio.TimeoutError:
-            await app.sendFriendMessage(friend, MessageChain("未收到用户Id"))
+            await app.send_friend_message(friend, MessageChain("未收到用户Id"))
         else:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f'https://api.roblox.com/users/{ret_msg}/onlinestatus/') as r:
-                    ret = await r.json()
-                    Online = ret["IsOnline"]
-                    LastLocation = ret["LastLocation"]
-                    LastOnline = ret["LastOnline"]
-                    game_PlaceId = ret["PlaceId"]
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f'https://api.roblox.com/users/{ret_msg}/onlinestatus/') as r:
+                        ret = await r.json()
+                        Online = ret["IsOnline"]
+                        LastLocation = ret["LastLocation"]
+                        LastOnline = ret["LastOnline"]
+                        game_PlaceId = ret["PlaceId"]
 
-                async with session.get(f'https://api.roblox.com/users/{ret_msg}') as r:
-                    ret = await r.json()
-                    username = ret["Username"]
-                    UserId = ret["id"]
-
-
+                    async with session.get(f'https://api.roblox.com/users/{ret_msg}') as r:
+                        ret = await r.json()
+                        username = ret["Username"]
+                        UserId = ret["id"]
+            except Exception as Err:
+                await app.send_friend_message(friend, MessageChain.create(Plain(f'错误 {Err}')))
+                print(f'错误 {Err}')
             await app.send_friend_message(friend, MessageChain.create(Plain(
                 f"用户名: {username}\n用户ID:{UserId}\n用户在线: {onlinereturn(Online)}\n最后状态: {check_status(LastLocation)}\n最后在线时间: {LastOnline}\n当前所在游戏Id: {check_game_place(game_PlaceId)}"
                 )

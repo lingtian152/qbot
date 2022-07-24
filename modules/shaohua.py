@@ -19,6 +19,10 @@ channel = Channel.current()
 )
 
 async def shoahua(app: Ariadne, friend: Friend):  # 腿控图
-    req = requests.get("https://api.ghser.com/saohua/")
-    text = req.content
-    await app.sendFriendMessage(friend, MessageChain.create(Plain(text)))
+    try:
+        req = requests.get("https://api.ghser.com/saohua/")
+        text = req.content
+        await app.send_friend_message(friend, MessageChain.create(Plain(text)))
+    except Exception as Err:
+        await app.send_friend_message(friend, MessageChain.create(Plain(f'错误 {Err}')))
+        print(f'错误 {Err}')

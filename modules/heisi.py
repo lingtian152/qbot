@@ -21,10 +21,14 @@ channel = Channel.current()
 
 async def heisi(app: Ariadne, friend: Friend): # lsp专属
     ero_url = "https://api.lolicon.app/setu/v2?r18=0&tag=黑丝"
-    async with aiohttp.ClientSession() as session:
-        async with session.get(ero_url) as r:
-            ret = await r.json()
-            pic_url = ret["data"][0]["urls"]["original"]
-        async with session.get(pic_url) as r:
-            pic = await r.read()
-            await app.sendFriendMessage(friend, MessageChain.create(FlashImage(data_bytes=pic)))
+
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(ero_url) as r:
+                ret = await r.json()
+                pic_url = ret["data"][0]["urls"]["original"]
+            async with session.get(pic_url) as r:
+                pic = await r.read()
+                await app.send_friend_message(friend, MessageChain.create(FlashImage(data_bytes=pic)))
+    except Exception as Err:
+        await app.send_friend_message(friend, MessageChain.create(f'错误 {Err}'))

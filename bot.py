@@ -6,10 +6,10 @@ import pkgutil
 from creart import create
 from graia.ariadne.app import Ariadne
 from graia.broadcast import Broadcast
+from graia.ariadne.message.chain import MessageChain
 from graia.saya.builtins.broadcast import BroadcastBehaviour
 from graia.saya import Saya
 from graia.ariadne.console import Console
-from graia.ariadne.console.saya import ConsoleBehaviour
 
 from graia.ariadne.connection.config import (
     HttpClientConfig,
@@ -40,7 +40,10 @@ con = Console(broadcast=broadcast, prompt="Console> ")
 
 with saya.module_context():
     for module_info in pkgutil.iter_modules(["modules"]):
-        saya.require(f"modules.{module_info.name}")
+        try:
+            saya.require(f"modules.{module_info.name}")
+        except Exception as Err:
+             app.send_Friend_Message(1553396053, MessageChain.create(f'加载出错 {Err} {module_info.name}'))
 
 
 app.launch_blocking()
