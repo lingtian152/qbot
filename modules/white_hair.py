@@ -1,5 +1,5 @@
 import aiohttp
-import time
+
 
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage
@@ -12,15 +12,16 @@ from graia.saya.builtins.broadcast import ListenerSchema
 
 channel = Channel.current()
 
+
 @channel.use(
     ListenerSchema(
         listening_events=[FriendMessage],
-        decorators=[MatchContent("白丝")],
+        decorators=[MatchContent("白发")],
     )
 )
 
-async def baisi(app: Ariadne, friend: Friend): # lsp专属
-    ero_url = "https://api.lolicon.app/setu/v2?r18=0&tag=白丝"
+async def white_hair(app: Ariadne, friend: Friend):
+    ero_url = "https://api.lolicon.app/setu/v2?tag=白髮&r18=0"
     
     try:
         async with aiohttp.ClientSession() as session:
