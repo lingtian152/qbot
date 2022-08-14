@@ -1,5 +1,4 @@
 import aiohttp
-import time
 
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage
