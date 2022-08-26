@@ -6,6 +6,9 @@ import pkgutil
 from creart import create
 from graia.ariadne.app import Ariadne
 from graia.broadcast import Broadcast
+from graia.ariadne.message.chain import MessageChain
+from graia.ariadne.message.element import Plain
+from graia.ariadne.model import Friend
 from graia.saya.builtins.broadcast import BroadcastBehaviour
 from graia.saya import Saya
 from graia.ariadne.console import Console
@@ -42,5 +45,5 @@ with saya.module_context():
     for module_info in pkgutil.iter_modules(["modules"]):
         saya.require(f"modules.{module_info.name}")
 
-app.launch_blocking()
 
+app.launch_blocking()
