@@ -1,3 +1,5 @@
+import requests
+import aiohttp
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage
 from graia.ariadne.message.chain import MessageChain
@@ -13,15 +15,15 @@ channel = Channel.current()
 @channel.use(
     ListenerSchema(
         listening_events=[FriendMessage],
-        decorators=[MatchContent("菜单")],
+        decorators=[MatchContent("骚话")],
     )
 )
-
-async def help(app: Ariadne, friend: Friend): # 帮助
-    await app.send_friend_message(
-        friend, 
-        MessageChain.create(
-        Plain(
-            f'菜单 \n ----------- \n 1. 看腿 \n 2. 二次元 \n 3. 看美女 \n 4. 涩图 \n 5. 白丝 \n 6. 黑丝 \n 7. 短发 \n 8. 原神 \n 9.骚话 \n 10. 白发 \n 11. cos图(收图有一定的延迟) \n ----------- \n 发送文字 即可食用 \n -------------')
-        )
-        )
+async def shoahua(app: Ariadne, friend: Friend):  # 骚话
+    try:
+        req = requests.get("http://api.ay15.cn/api/saohua/api.php")
+        text = req.content
+        
+        await app.send_friend_message(friend, MessageChain.create(Plain(text)))
+    except Exception as Err:
+        await app.send_friend_message(friend, MessageChain.create(Plain(f'错误 {Err}')))
+        print(f'错误 {Err}')

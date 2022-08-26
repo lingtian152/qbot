@@ -21,12 +21,11 @@ channel = Channel.current()
 )
 
 async def meinu(app: Ariadne, friend: Friend): # lsp专属
-    img = ["http://api.lingfeng.press/api/pcmnt.php",
-           "http://api.lingfeng.press/api/sjmnt.php"]
+    img = "https://www.hlapi.cn/api/sjmm1"
     
     try:
         async with aiohttp.ClientSession() as session:
-            async with session.get(str(random.choice(img))) as r:
+            async with session.get(img) as r:
                 data = await r.read()
         await app.send_friend_message(friend, MessageChain.create(Image(data_bytes=data)))
     except Exception as Err:
