@@ -15,5 +15,8 @@ channel = Channel.current()
     )
 )
 
-async def help(app: Ariadne, friend: Friend): # 帮助
-        await app.send_friend_message(friend, MessageChain.create(Plain("菜单 \n-------------\n1. 看腿\n2. 二次元\n3. 看美女\n4. 涩图\n5. 白丝\n6. 黑丝\n7. 短发\n8. 原神\n9. 骚话\n10. 白发\n11. cos图(收图有一定的延迟)\n12. 舔狗日记\n--------------\n发送文字 即可食用\n-------------")))
+async def help(app: Ariadne, friend: Friend) -> str: # 帮助
+    with open("modules\Text_Folder\help.txt", encoding='utf8', errors='ignore') as txt:
+        text = txt.readlines()
+    await app.send_friend_message(friend, MessageChain.create(text))
+    txt.close()
