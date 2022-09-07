@@ -1,4 +1,3 @@
-import random
 import aiohttp
 from graia.ariadne.app import Ariadne
 from graia.ariadne.event.message import FriendMessage

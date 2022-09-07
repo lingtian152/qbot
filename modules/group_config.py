@@ -25,14 +25,31 @@ channel = Channel.current()
 )
 
 async def setup(app: Ariadne, group: Group): # 帮助
-        with open("modules\Config\group.json", encoding='utf8', errors='ignore') as f:
-            Config = json.load(f)
+        with open("modules\Config\group_config.json", encoding='utf8', errors='ignore') as config:
+            Config = json.load(config)
 
-        Config[group.id] = "true"
+        Config[str(group.id)] = "true"
 
-        with open("moduels\Config\group.json", "w") as f:
-            json.dump(Config, f, indent=4)
+        with open("modules\Config\group_config.json", "w") as config:
+            json.dump(Config, config, indent=4)
 
         await app.send_group_message(group.id, MessageChain("已开启"))
 
         
+@channel.use(
+    ListenerSchema(
+        listening_events=[GroupMessage],
+        decorators=[MatchContent("关机"), check_member(1553396053)],
+    )
+)
+
+async def setup(app: Ariadne, group: Group): # 帮助
+        with open("modules\Config\group_config.json", encoding='utf8', errors='ignore') as config:
+            Config = json.load(config)
+
+        Config[str(group.id)] = "false"
+
+        with open("modules\Config\group_config.json", "w") as config:
+            json.dump(Config, config, indent=4)
+
+        await app.send_group_message(group.id, MessageChain("已关机"))
