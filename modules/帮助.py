@@ -16,7 +16,7 @@ channel = Channel.current()
 )
 
 async def help(app: Ariadne, friend: Friend) -> str: # 帮助
-    with open("modules\Text_Folder\help.txt", encoding='utf8', errors='ignore') as txt:
+    with open("modules\Config\help.txt", encoding='utf8', errors='ignore') as txt:
         text = txt.readlines()
     await app.send_friend_message(friend, MessageChain.create(text))
     txt.close()
