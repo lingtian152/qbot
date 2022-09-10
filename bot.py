@@ -1,17 +1,14 @@
 import asyncio
 import pkgutil
 
+
 # bot moduels
 from creart import create
 from graia.ariadne.app import Ariadne
 from graia.broadcast import Broadcast
-from graia.ariadne.message.chain import MessageChain
-from graia.ariadne.message.element import Plain
-from graia.ariadne.model import Friend
 from graia.saya.builtins.broadcast import BroadcastBehaviour
 from graia.saya import Saya
 from graia.ariadne.console import Console
-
 from graia.ariadne.connection.config import (
     HttpClientConfig,
     config,
@@ -22,6 +19,7 @@ loop = asyncio.new_event_loop()
 
 
 broadcast = Broadcast(loop=loop)
+bcc = create(Broadcast)
 app = Ariadne(
     connection=config(
         1330542948,  # 你的机器人的 qq 号
@@ -39,10 +37,17 @@ saya.install_behaviours(BroadcastBehaviour(broadcast))
 
 con = Console(broadcast=broadcast, prompt="Console> ")
 
+class load_module():
+    def fun(path: str):
+        with saya.module_context():
+            for module_info in pkgutil.iter_modules([path]):
+                saya.require(f"{path}.{module_info.name}")
 
-with saya.module_context():
-    for module_info in pkgutil.iter_modules(["modules"]):
-        saya.require(f"modules.{module_info.name}")
+    fun("modules")
+    fun("group_modules")
 
+
+if __name__ == "__main__":
+    load_module()
 
 app.launch_blocking()
