@@ -1,29 +1,32 @@
 import asyncio
-import pkgutil
-
 
 # bot moduels
 from creart import create
 from graia.ariadne.app import Ariadne
-from graia.broadcast import Broadcast
-from graia.saya.builtins.broadcast import BroadcastBehaviour
-from graia.saya import Saya
-from graia.ariadne.console import Console
 from graia.ariadne.connection.config import (
     HttpClientConfig,
     config,
 )
+from graia.ariadne.console import Console
+from graia.broadcast import Broadcast
+from graia.saya import Saya
+from graia.saya.builtins.broadcast import BroadcastBehaviour
+from graia.ariadne.console.saya import ConsoleBehaviour
+from modules import loader
 
 loop = asyncio.new_event_loop()
 
-
-
 broadcast = Broadcast(loop=loop)
+
+
 bcc = create(Broadcast)
+saya = create(Saya)
+
+
 app = Ariadne(
     connection=config(
         1330542948,  # 你的机器人的 qq 号
-        "INITKEYxyFw6Q17",  # 填入你的 mirai-api-http 配置中的 verifyKey
+        "114514",  # 填入你的 mirai-api-http 配置中的 verifyKey
         # 以下两行（不含注释）里的 host 参数的地址
         # 是你的 mirai-api-http 地址中的地址与端口
         # 他们默认为 "http://localhost:8080"
@@ -32,22 +35,11 @@ app = Ariadne(
         HttpClientConfig(host="http://localhost:8080"),
     ),
 )
-saya = create(Saya)
-saya.install_behaviours(BroadcastBehaviour(broadcast))
 
-con = Console(broadcast=broadcast, prompt="Console> ")
-
-class load_module():
-    def fun(path: str):
-        with saya.module_context():
-            for module_info in pkgutil.iter_modules([path]):
-                saya.require(f"{path}.{module_info.name}")
-
-    fun("modules")
-    fun("group_modules")
+con = Console(broadcast=bcc, prompt="后台> ")
+saya.install_behaviours(ConsoleBehaviour(con))
 
 
-if __name__ == "__main__":
-    load_module()
+loader
 
 app.launch_blocking()
